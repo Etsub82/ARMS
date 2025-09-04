@@ -85,14 +85,17 @@ namespace API.Controllers
             var application = new ApplicationModel
             {
                 Name = createApplicationDto.Name,
-                AppId = createApplicationDto.AppId ?? Guid.NewGuid().ToString(), // Generate if not provided
-                AppKey = createApplicationDto.AppKey ?? Guid.NewGuid().ToString(), // Generate if not provided
+                AppId = (string.IsNullOrWhiteSpace(createApplicationDto.AppId) || createApplicationDto.AppId.Equals("null", StringComparison.OrdinalIgnoreCase)) ? Guid.NewGuid().ToString() : createApplicationDto.AppId, // Generate if not provided or empty or literal "null"
+                AppKey = (string.IsNullOrWhiteSpace(createApplicationDto.AppKey) || createApplicationDto.AppKey.Equals("null", StringComparison.OrdinalIgnoreCase)) ? Guid.NewGuid().ToString() : createApplicationDto.AppKey, // Generate if not provided or empty or literal "null"
                 Status = "Pending", // Initial status
                 DateCreated = DateTime.UtcNow,
                 CreatedBy = "Admin",
                 LastModifiedDate = DateTime.UtcNow,
                 LastModifiedBy = "Admin"
             };
+
+            Console.WriteLine($"Generated AppId: {application.AppId}");
+            Console.WriteLine($"Generated AppKey: {application.AppKey}");
 
             await _applicationRepository.Add(application);
 
